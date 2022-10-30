@@ -1,0 +1,173 @@
+package com.soft_engin.hospital.utils;
+
+import org.jetbrains.annotations.NotNull;
+import org.springframework.data.redis.core.BoundSetOperations;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * @author Linf
+ * @date 10/16/2022 6:56 PM
+ */
+@SuppressWarnings(value = {"unchecked", "rawtypes"})
+@Component
+public class RedisCache {
+
+    public final RedisTemplate redisTemplate;
+
+    public RedisCache(RedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+
+    /**
+     * 缓存的基本对象。Integer String 实体类
+     *
+     * @param key   缓存的键值
+     * @param value 缓存的值
+     */
+    public <T> void setCacheObject(final String key, final T value) {
+        redisTemplate.opsForValue().set(key, value);
+    }
+
+    /**
+     * @param key      缓存的键值
+     * @param value    缓存的值
+     * @param timeout  时间
+     * @param timeUnit 时间颗粒度
+     */
+    public <T> void setCacheObject(final String key, final T value, final Integer timeout, final TimeUnit timeUnit) {
+        redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
+    }
+
+    public boolean expire(final String key, final long timeout) {
+        return expire(key, timeout, TimeUnit.SECONDS);
+    }
+
+    public boolean expire(final String key, final long timeout, final TimeUnit unit) {
+        return redisTemplate.expire(key, timeout, unit);
+    }
+
+    /**
+     * 获得缓存的基本对象
+     *
+     * @param key 缓存键值
+     * @return 缓存键值对应的数据
+     */
+    public <T> T getCacheObject(final String key) {
+        ValueOperations<String, T> operations = redisTemplate.opsForValue();
+        return operations.get(key);
+    }
+
+    /**
+     * 删除单个对象
+     */
+    public void deleteObject(final String key) {
+        redisTemplate.delete(key);
+    }
+
+
+    /**
+     * 删除集合对象
+     */
+    public long deleteObject(final Collection collection) {
+        return redisTemplate.delete(collection);
+    }
+
+
+    /**
+     * 缓存list数据
+     *
+     * @param key      缓存的键值
+     * @param dataList 带缓存的list数据
+     * @return 缓存的对象
+     */
+    public <T> long setCacheList(final String key, final List<T> dataList) {
+        Long count = redisTemplate.opsForList().rightPushAll(key, dataList);
+        return count == null ? 0 : count;
+    }
+
+
+    /**
+     * 获得缓存的list对象
+     *
+     * @param key 缓存的键值
+     * @return 缓存键值对应的集合数据
+     */
+    public <T> List<T> getCacheList(final String key) {
+        return redisTemplate.opsForList().range(key, 0, -1);
+    }
+
+    /**
+     * 缓存Set
+     *
+     * @param key     缓存键值
+     * @param dataSet 缓存的数据
+     * @return 缓存数据的对象
+     */
+    public <T> BoundSetOperations<String, T> setCacheSet(final String key, @NotNull final Set<T> dataSet) {
+        BoundSetOperations<String, T> setOperation = redisTemplate.boundSetOps(key);
+        for (T t : dataSet) {
+            setOperation.add(t);
+        }
+        return setOperation;
+    }
+
+    /**
+     * 获得缓存的set
+     */
+    public <T> Set<T> getCacheSet(final String key) {
+        return redisTemplate.boundSetOps(key).members();
+    }
+
+    /**
+     * 缓存Map
+     */
+    public <T> void setCacheMap(final String key, final Map<String, T> dataMap) {
+        if (null != dataMap) {
+            redisTemplate.opsForHash().putAll(key, dataMap);
+        }
+    }
+
+    /**
+     * 获得缓存的Map
+     */
+    public <T> Map<String, T> getCacheMap(String key) {
+        return (Map<String, T>) redisTemplate.opsForHash().entries(key);
+    }
+
+    public <T> void setCacheMapValue(final String key, final String hkey, final T value) {
+        redisTemplate.opsForHash().put(key, hkey, value);
+    }
+
+    public <T> T getCacheMapValue(final String key, final String hkey) {
+        HashOperations<String, String, T> opsForHash = redisTemplate.opsForHash();
+        return opsForHash.get(key, hkey);
+    }
+
+    public void delCacheMapValue(final String key, final String hkey) {
+        HashOperations hashOperations = redisTemplate.opsForHash();
+        hashOperations.delete(key, hkey);
+    }
+
+    public <T> List<T> getMultiCacheMapValue(final String key, final Collection<Object> hkeys) {
+        return redisTemplate.opsForHash().multiGet(key, hkeys);
+    }
+
+    /**
+     * 获得缓存的基本对象列表
+     *
+     * @param pattern 字符串前缀
+     */
+    public Collection<String> keys(final String pattern) {
+        return redisTemplate.keys(pattern);
+    }
+}
+

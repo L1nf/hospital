@@ -1,0 +1,30 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /
+spring:
+  application:
+    name: hospital
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://81.69.221.225:2207/db_se?serverTimezone=UTC
+    username: root
+    password: 'software'
+  redis:
+    port: 6378
+    host: 81.69.221.225
+    connect-timeout: 5000
+    password: hosptial
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+mybatis-plus:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.soft_engin.hospital.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    sql: debug
