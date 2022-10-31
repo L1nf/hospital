@@ -1,6 +1,6 @@
 package com.soft_engin.hospital.config;
 
-import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
+import com.soft_engin.hospital.utils.FastJsonRedisSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
