@@ -40,7 +40,7 @@ public class UserController {
      // TODO: 在此续写权限管理，需要先登录，才有权限修改个人信息
      @ApiOperation("edit_user_info")
      @PutMapping("/edit")
-     @PreAuthorize("hasAuthority('')")
+     @PreAuthorize("hasAuthority('se:root:edit_user')")
      public boolean editUserInfo() {
           return true;
      }
