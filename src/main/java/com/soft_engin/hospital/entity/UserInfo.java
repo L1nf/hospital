@@ -109,20 +109,51 @@ public class UserInfo implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", userId=").append(userId);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", updateTime=").append(updateTime);
-        sb.append(", name=").append(name);
-        sb.append(", sex=").append(sex);
-        sb.append(", password=").append(password);
-        sb.append(", phone=").append(phone);
-        sb.append(", level=").append(level);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        String sb = getClass().getSimpleName() +
+                " [" +
+                "Hash = " + hashCode() +
+                ", userId=" + userId +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", name=" + name +
+                ", sex=" + sex +
+                ", password=" + password +
+                ", phone=" + phone +
+                ", level=" + level +
+                ", serialVersionUID=" + serialVersionUID +
+                "]";
+        return sb;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 }
